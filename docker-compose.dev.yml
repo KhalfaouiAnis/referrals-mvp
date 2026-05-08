@@ -1,0 +1,64 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Development override — spins up ONLY infrastructure services.
+# Usage:
+#   docker compose -f docker-compose.dev.yml up -d
+#   docker compose -f docker-compose.dev.yml down   # -v also wipe volumes
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: referrals_postgres_dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: referrals
+      POSTGRES_PASSWORD: referrals_secret
+      POSTGRES_DB: referrals_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U referrals -d referrals_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:alpine
+    container_name: referrals_redis_dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: referrals_minio_dev
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: referrals_minio
+      MINIO_ROOT_PASSWORD: referrals_secret
+    ports:
+      - "9000:9000" # S3 API  — used by the NestJS API
+      - "9001:9001" # MinIO web console — http://localhost:9001
+    volumes:
+      - minio_dev_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+  minio_dev_data:

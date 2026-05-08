@@ -1,0 +1,24 @@
+{
+  "name": "referrals",
+  "private": true,
+  "scripts": {
+    "dev:api": "pnpm build:shared && pnpm --filter @referrals/api dev",
+    "dev:web": "pnpm --filter @referrals/web dev",
+    "build:shared": "pnpm --filter @referrals/shared build",
+    "build:api": "pnpm build:shared && pnpm --filter @referrals/api build",
+    "build:web": "pnpm --filter @referrals/web build",
+    "migration:generate": "pnpm --filter @referrals/api migration:generate",
+    "migration:run": "pnpm --filter @referrals/api migration:run",
+    "migration:revert": "pnpm --filter @referrals/api migration:revert",
+    "seed": "pnpm --filter @referrals/api seed",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

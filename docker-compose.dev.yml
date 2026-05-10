@@ -1,9 +1,7 @@
-# ─────────────────────────────────────────────────────────────────────────────
 # Development override — spins up ONLY infrastructure services.
 # Usage:
 #   docker compose -f docker-compose.dev.yml up -d
 #   docker compose -f docker-compose.dev.yml down   # -v also wipe volumes
-# ─────────────────────────────────────────────────────────────────────────────
 
 services:
   postgres:

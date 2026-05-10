@@ -3,6 +3,7 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { Logger } from "@nestjs/common";
@@ -14,7 +15,7 @@ import { ConfigService } from "@nestjs/config";
   namespace: "/",
 })
 export class ReferralsGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer()
   server: Server;
@@ -25,6 +26,10 @@ export class ReferralsGateway
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
   ) {}
+
+  afterInit(): void {
+    this.logger.log("Gateway initialized.");
+  }
 
   handleConnection(client: Socket): void {
     try {

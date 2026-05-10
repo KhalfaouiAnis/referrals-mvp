@@ -1,0 +1,44 @@
+{
+  "name": "@referrals/web",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@hookform/resolvers": "^3.9.0",
+
+    "@mui/material": "^7.3.5",
+    "@mui/icons-material": "^7.3.5",
+    "@mui/lab": "7.0.1-beta.22",
+    "@mui/x-data-grid": "^9.0.2",
+    "@mui/x-date-pickers": "^9.0.0",
+
+    "@referrals/shared": "workspace:*",
+    "@tanstack/react-query": "^5.100.8",
+    "axios": "^1.8.4",
+    "date-fns": "^4.1.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-hook-form": "^7.54.2",
+    "react-router-dom": "^7.14.2",
+    "recharts": "^2.15.0",
+    "socket.io-client": "^4.8.1",
+    "zustand": "^5.0.12",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "typescript": "^5.7.2",
+    "vite": "^8.0.0"
+  }
+}

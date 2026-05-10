@@ -5,8 +5,8 @@ import {
 import { Paper, Skeleton, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { ReferralStatus } from '@referrals/shared';
-import { AuthApprovalRate, ReferralsBySpecialty, ReferralsByStatus, TimeToSchedulePoint } from 'src/api/services/analytics.service';
-import { useUiStore } from 'src/store/ui.store';
+import { AuthApprovalRate, ReferralsBySpecialty, ReferralsByStatus, TimeToSchedulePoint } from '../../../api/services/analytics.service';
+import { useUiStore } from '../../../store/ui.store';
 
 const STATUS_COLORS: Record<string, string> = {
   INTAKE: '#90CAF9', CLINICAL_PREP: '#64B5F6', AUTHORIZATION: '#FFA726',

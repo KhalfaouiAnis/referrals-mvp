@@ -6,7 +6,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useUiStore } from 'src/store/ui.store';
+import { useUiStore } from '../../store/ui.store';
 
 interface NavItem {
     label: string;
@@ -62,10 +62,14 @@ export function Sidebar({ width }: { width: number }) {
 
             <List sx={{ px: 1, pt: 1 }}>
                 {NAV_ITEMS.map((item) => {
+                    console.log({ pathname });
+                    console.log("item.path: ", item.path);
+
+
                     const active =
                         item.path === '/'
                             ? pathname === '/'
-                            : item.path.startsWith(pathname);
+                            : pathname === item.path;
 
                     return (
                         <ListItemButton

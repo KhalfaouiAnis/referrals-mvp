@@ -2,13 +2,13 @@ import { Box } from '@mui/material';
 import { Outlet, Navigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './Topbar';
-import { useAuthStore } from 'src/store/auth.store';
-import { useUiStore } from 'src/store/ui.store';
+import { useAuthStore } from '../../store/auth.store';
+import { useUiStore } from '../../store/ui.store';
 
 const SIDEBAR_WIDTH = 240;
 const TOPBAR_HEIGHT = 64;
 
-export function AppShel() {
+export function AppShell() {
     const isAuthenticated = useAuthStore(s => s.isAuthenticated)
     const sidebarOpen = useUiStore(s => s.sidebarOpen)
 

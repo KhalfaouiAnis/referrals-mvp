@@ -7,7 +7,7 @@ import {
   TimeToScheduleLine,
   AuthApprovalRateCard,
 } from './components/Charts';
-import { useAnalytics } from 'src/api/hooks/useAnalytics';
+import { useAnalytics } from '../../api/hooks/useAnalytics';
 
 export function DashboardPage() {
   const { data, isFetching, refetch } = useAnalytics();

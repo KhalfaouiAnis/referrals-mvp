@@ -13,9 +13,9 @@ import { useNavigate } from 'react-router-dom';
 import { ReferralFilterParams } from '@referrals/shared';
 import { ReferralStatus, ReferralPriority } from '@referrals/shared';
 import { format } from 'date-fns';
-import { ReferralListItem } from 'src/api/services/referrals.service';
-import { StatusBadge } from 'src/components/ui/StatusBadge';
-import { PriorityChip } from 'src/components/ui/PriorityChip';
+import { ReferralListItem } from '../../../api/services/referrals.service';
+import { StatusBadge } from '../../../components/ui/StatusBadge';
+import { PriorityChip } from '../../../components/ui/PriorityChip';
 
 interface ReferralsDataGridProps {
   rows: ReferralListItem[];

@@ -5,9 +5,9 @@ import { z } from 'zod';
 import { Box, Button, Paper, Stack, Typography, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { UserRole } from '@referrals/shared';
-import { useAuthStore } from 'src/store/auth.store';
-import { apiClient } from 'src/api/client';
-import { FormField } from 'src/components/ui/FormField';
+import { useAuthStore } from '../../store/auth.store';
+import { apiClient } from '../../api/client';
+import { FormField } from '../../components/ui/FormField';
 
 const loginSchema = z.object({
     email: z.string().email('Enter a valid email address.'),

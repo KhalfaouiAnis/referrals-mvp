@@ -10,12 +10,12 @@ import { PatientInfoSection } from './components/PatientInfoSection';
 import { ClinicalDetailsSection } from './components/ClinicalDetailsSection';
 import { AuthorizationSection } from './components/AuthorizationSection';
 import { NotesSection } from './components/NotesSection';
-import { useAddNote, useAdvanceStatus, useDeleteDocument, useReferral, useUploadDocument } from 'src/api/hooks/useReferral';
-import { StatusBadge } from 'src/components/ui/StatusBadge';
-import { PriorityChip } from 'src/components/ui/PriorityChip';
-import { ReferralStatusStepper } from 'src/components/referrals/ReferralStatusStepper';
-import { FileDropzone } from 'src/components/ui/FileDropzone';
-import { ReferralTimeline } from 'src/components/referrals/ReferralTimeline';
+import { useAddNote, useAdvanceStatus, useDeleteDocument, useReferral, useUploadDocument } from '../../api/hooks/useReferral';
+import { StatusBadge } from '../../components/ui/StatusBadge';
+import { PriorityChip } from '../../components/ui/PriorityChip';
+import { ReferralStatusStepper } from '../../components/referrals/ReferralStatusStepper';
+import { FileDropzone } from '../../components/ui/FileDropzone';
+import { ReferralTimeline } from '../../components/referrals/ReferralTimeline';
 
 export function ReferralProfilePage() {
   const { id } = useParams<{ id: string }>();

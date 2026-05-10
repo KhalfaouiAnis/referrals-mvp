@@ -2,8 +2,8 @@ import { Stack } from '@mui/material';
 import { Control } from 'react-hook-form';
 import { ReferralPriority } from '@referrals/shared';
 import { CreateReferralFormValues } from '../schema/create-referral.schema';
-import { FormSelect } from 'src/components/ui/FormSelect';
-import { FormField } from 'src/components/ui/FormField';
+import { FormSelect } from '../../../components/ui/FormSelect';
+import { FormField } from '../../../components/ui/FormField';
 
 const PRIORITY_OPTIONS = [
   { label: 'Routine', value: ReferralPriority.ROUTINE },

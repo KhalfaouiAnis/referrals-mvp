@@ -2,8 +2,8 @@ import { AppBar, Avatar, Box, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typo
 import MenuIcon from '@mui/icons-material/Menu';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUiStore } from 'src/store/ui.store';
-import { useAuthStore } from 'src/store/auth.store';
+import { useUiStore } from '../../store/ui.store';
+import { useAuthStore } from '../../store/auth.store';
 
 export function TopBar({ height, sidebarWidth }: { height: number; sidebarWidth: number }) {
     const { toggleSidebar, sidebarOpen } = useUiStore();

@@ -1,7 +1,7 @@
 import { Stack, Typography } from '@mui/material';
 import { Control } from 'react-hook-form';
 import { CreateReferralFormValues } from '../schema/create-referral.schema';
-import { FormField } from 'src/components/ui/FormField';
+import { FormField } from '../../../components/ui/FormField';
 
 interface Props {
   control: Control<CreateReferralFormValues>;

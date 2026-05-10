@@ -18,8 +18,8 @@ import { useNavigate } from 'react-router-dom';
 import { ReferralStatus, ReferralPriority, SpecialtyType } from '@referrals/shared';
 import { ReferralsDataGrid } from './components/ReferralsDataGrid';
 import { GridRowSelectionModel } from '@mui/x-data-grid';
-import { useUiStore } from 'src/store/ui.store';
-import { useBulkAction, useExportReferrals, useReferrals } from 'src/api/hooks/useReferrals';
+import { useUiStore } from '../../store/ui.store';
+import { useBulkAction, useExportReferrals, useReferrals } from '../../api/hooks/useReferrals';
 
 export function ReferralsListPage() {
   const navigate = useNavigate();

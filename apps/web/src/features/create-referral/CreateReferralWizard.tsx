@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useCreateReferral } from "src/api/hooks/usePatients";
+import { useCreateReferral } from "../../api/hooks/usePatients";
 import { CreateReferralFormValues, createReferralSchema, STEP_SCHEMAS } from "./schema/create-referral.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReferralPriority } from "@referrals/shared";

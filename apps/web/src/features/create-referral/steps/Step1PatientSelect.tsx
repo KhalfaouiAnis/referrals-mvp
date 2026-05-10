@@ -2,9 +2,9 @@ import { SpecialtyType } from "@referrals/shared";
 import { CreateReferralFormValues } from "../schema/create-referral.schema";
 import { Control, useController } from "react-hook-form";
 import { useState } from "react";
-import { usePatientSearch } from "src/api/hooks/usePatients";
+import { usePatientSearch } from "../../../api/hooks/usePatients";
 import { Autocomplete, Box, Stack, TextField, Typography } from "@mui/material";
-import { FormSelect } from "src/components/ui/FormSelect";
+import { FormSelect } from "../../../components/ui/FormSelect";
 
 const SPECIALTY_OPTIONS = Object.values(SpecialtyType).map((v) => ({
     label: v.charAt(0) + v.slice(1).toLowerCase().replace(/_/g, ' '),

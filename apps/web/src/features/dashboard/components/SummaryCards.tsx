@@ -3,7 +3,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import PendingIcon from '@mui/icons-material/Pending';
-import { DashboardStats } from 'src/api/services/analytics.service';
+import { DashboardStats } from '../../../api/services/analytics.service';
 
 interface StatCardProps {
   label: string;

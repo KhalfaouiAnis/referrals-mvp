@@ -65,7 +65,7 @@ export function Sidebar({ width }: { width: number }) {
                     const active =
                         item.path === '/'
                             ? pathname === '/'
-                            : pathname.startsWith(item.path);
+                            : item.path.startsWith(pathname);
 
                     return (
                         <ListItemButton
@@ -86,7 +86,7 @@ export function Sidebar({ width }: { width: number }) {
                             <ListItemIcon sx={{ minWidth: 36 }}>{item.icon}</ListItemIcon>
                             <ListItemText
                                 primary={item.label}
-                                primaryTypographyProps={{ variant: 'body2', fontWeight: active ? 600 : 400 }}
+                                slotProps={{ primary: { variant: 'body2', fontWeight: active ? 600 : 400 } }}
                             />
                             {item.badge && (
                                 <Chip label={item.badge} size="small" color="error" sx={{ height: 18 }} />

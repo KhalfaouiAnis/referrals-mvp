@@ -10,10 +10,10 @@ interface ReferralUpdatedEvent {
 let socket: Socket | null = null;
 
 export function connectWebSocket(): () => void {
-  const wsUrl = import.meta.env.VITE_WS_URL ?? "http://localhost:3000";
+  // const wsUrl = import.meta.env.VITE_WS_URL ?? "http://localhost:3000";
   const token = localStorage.getItem("access_token");
 
-  socket = io(wsUrl, {
+  socket = io(undefined, {
     auth: { token },
     transports: ["websocket"],
     reconnectionAttempts: 5,

@@ -1,0 +1,58 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: referrals-ingress
+  namespace: referrals
+  annotations:
+    # nginx ingress controller annotations
+    nginx.ingress.kubernetes.io/proxy-body-size: "30m" # allow 25 MB uploads + headroom
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
+    # WebSocket support
+    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "upgrade";
+spec:
+  ingressClassName: nginx
+  rules:
+  # Main app
+  - host: referrals.local
+    http:
+      paths:
+      # API routes — proxy to NestJS
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 3000
+      # WebSocket — proxy to NestJS
+      - path: /socket.io
+        pathType: Prefix
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 3000
+      # Everything else — serve the web app
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-service
+            port:
+              number: 80
+
+  # MinIO console (minio.referrals.local)
+  - host: minio.referrals.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: minio-service
+            port:
+              number: 9001

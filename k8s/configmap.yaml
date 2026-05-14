@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: referrals-config
+  namespace: referrals
+data:
+  # Postgres
+  POSTGRES_HOST: "postgres-service"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "referrals_db"
+  POSTGRES_USER: "referrals"
+
+  # Redis
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+
+  # MinIO
+  MINIO_ENDPOINT: "http://minio-service:9000"
+  MINIO_BUCKET: "referrals-documents"
+  MINIO_REGION: "us-east-1"
+  MINIO_USE_SSL: "false"
+
+  # API
+  API_PORT: "3000"
+  NODE_ENV: "production"
+  CORS_ORIGIN: "http://referrals.local"
+
+  # JWT
+  JWT_EXPIRES_IN: "7d"

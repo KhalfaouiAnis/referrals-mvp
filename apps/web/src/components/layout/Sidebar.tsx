@@ -62,10 +62,6 @@ export function Sidebar({ width }: { width: number }) {
 
             <List sx={{ px: 1, pt: 1 }}>
                 {NAV_ITEMS.map((item) => {
-                    console.log({ pathname });
-                    console.log("item.path: ", item.path);
-
-
                     const active =
                         item.path === '/'
                             ? pathname === '/'

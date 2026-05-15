@@ -45,8 +45,6 @@ export class ReferralsController {
     private readonly workflowService: ReferralWorkflowService,
   ) {}
 
-  // ── CRUD ──────────────────────────────────────────────────────────────────
-
   @Post()
   @Roles(UserRole.PHYSICIAN, UserRole.NURSE_PRACTITIONER, UserRole.ADMIN_STAFF)
   create(@Body() dto: CreateReferralDto, @CurrentUser() user: User) {
@@ -92,7 +90,7 @@ export class ReferralsController {
     return this.referralsService.update(id, dto, user);
   }
 
-  // ── Workflow ──────────────────────────────────────────────────────────────
+  // Workflow
 
   @Patch(':id/advance')
   advance(
@@ -108,7 +106,7 @@ export class ReferralsController {
     });
   }
 
-  // ── Notes ─────────────────────────────────────────────────────────────────
+  // Notes
 
   @Post(':id/notes')
   addNote(
@@ -119,7 +117,7 @@ export class ReferralsController {
     return this.referralsService.addNote(id, dto, user);
   }
 
-  // ── Documents ─────────────────────────────────────────────────────────────
+  // Documents
 
   @Post(':id/documents')
   @ApiConsumes('multipart/form-data')

@@ -8,7 +8,7 @@ import {
   MaxLength,
   MinLength,
 } from "class-validator";
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 import {
   ReferralPriority,
   ReferralStatus,
@@ -90,18 +90,21 @@ export class ReferralFilterDto extends PaginationDto {
   @IsArray()
   @IsEnum(ReferralStatus, { each: true })
   @Type(() => String)
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   status?: ReferralStatus[];
 
   @IsOptional()
   @IsArray()
   @IsEnum(ReferralPriority, { each: true })
   @Type(() => String)
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   priority?: ReferralPriority[];
 
   @IsOptional()
   @IsArray()
   @IsEnum(SpecialtyType, { each: true })
   @Type(() => String)
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   specialtyType?: SpecialtyType[];
 
   @IsOptional()

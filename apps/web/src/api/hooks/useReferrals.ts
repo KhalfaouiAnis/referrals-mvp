@@ -44,6 +44,7 @@ export function useExportReferrals() {
       a.href = url;
       a.download = `referrals-export-${Date.now()}.csv`;
       a.click();
+      document.body.removeChild(a);
       URL.revokeObjectURL(url);
     },
   });

@@ -3,11 +3,13 @@ import axios, {
   type InternalAxiosRequestConfig,
   type AxiosResponse,
 } from "axios";
+import qs from "qs";
 
 export const apiClient = axios.create({
-  baseURL: "", // Vite dev proxy handles /api → localhost:3000
+  baseURL: "",
   timeout: 15_000,
   headers: { "Content-Type": "application/json" },
+  paramsSerializer: (params) => qs.stringify(params, { arrayFormat: "repeat" }),
 });
 
 apiClient.interceptors.request.use(
@@ -37,7 +39,7 @@ apiClient.interceptors.response.use(
 
 /**
  * Convenience helpers — automatically unwrap the { data: T } envelope
- * added by NestJS TransformInterceptor.
+ * added by NestJS Transform Interceptor.
  */
 export const api = {
   get: <T>(url: string, params?: object): Promise<T> =>

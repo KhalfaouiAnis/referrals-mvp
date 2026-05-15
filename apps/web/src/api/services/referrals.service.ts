@@ -1,5 +1,5 @@
 import { GridRowId } from "@mui/x-data-grid";
-import { api } from "../client";
+import { api, apiClient } from "../client";
 import {
   ReferralFilterParams,
   ReferralStatus,
@@ -174,9 +174,10 @@ export const referralsService = {
     api.post("/api/v1/referrals/bulk", dto),
 
   export: (params: ReferralFilterParams): Promise<Blob> =>
-    api
-      .get<{
-        data: Blob;
-      }>("/api/v1/referrals/export", { params, responseType: "blob" })
+    apiClient
+      .get<Blob>("/api/v1/referrals/export", {
+        params,
+        responseType: "blob",
+      })
       .then((r) => r.data),
 };

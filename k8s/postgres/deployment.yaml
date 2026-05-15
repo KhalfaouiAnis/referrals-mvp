@@ -35,8 +35,8 @@ spec:
               key: POSTGRES_DB
         - name: POSTGRES_PASSWORD
           valueFrom:
-            configMapKeyRef:
-              name: referrals-config
+            secretKeyRef:
+              name: referrals-secrets
               key: POSTGRES_PASSWORD
         volumeMounts:
         - name: postgres-storage

@@ -9,6 +9,7 @@ data:
   POSTGRES_PORT: "5432"
   POSTGRES_DB: "referrals_db"
   POSTGRES_USER: "referrals"
+  DB_SSL: "false"
 
   # Redis
   REDIS_HOST: "redis-service"

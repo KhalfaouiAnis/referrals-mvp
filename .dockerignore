@@ -1,7 +1,5 @@
 node_modules/
 **/node_modules/
-.pnp
-.pnp.js
 
 dist/
 **/dist/
@@ -12,7 +10,6 @@ packages/shared/dist/
 .env.*
 !.env.example
 
-logs/
 **/*.log
 npm-debug.log*
 pnpm-debug.log*
@@ -21,7 +18,6 @@ pnpm-debug.log*
 .turbo/
 vite.config.ts.timestamp-*
 
-coverage/
 *.lcov
 .nyc_output/
 **/*.spec.ts
@@ -29,14 +25,9 @@ coverage/
 **/__tests__/
 **/__mocks__/
 
-uploads/
-apps/api/uploads/
-
 .vscode/
-Thumbs.db
 *.swp
 *.swo
-.history/
 
 .git/
 .gitignore

@@ -79,8 +79,8 @@ export interface ReferralDetail extends ReferralListItem {
   auditLogs: Array<{
     id: string;
     action: string;
-    beforeState: Record<string, unknown> | null;
-    afterState: Record<string, unknown> | null;
+    beforeState: Record<string, { status?: string }> | null;
+    afterState: Record<string, { status?: string }> | null;
     reason: string | null;
     actor: { fullName: string; role: string };
     createdAt: string;

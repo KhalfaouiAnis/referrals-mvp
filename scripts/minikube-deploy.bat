@@ -20,11 +20,11 @@ if /i "%~1"=="--reset" set "EXTRA_ARGS=-Reset"
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%PS_SCRIPT%" %EXTRA_ARGS%
 
 :: Pause so the window stays open when double-clicked from Explorer
-if %ERRORLEVEL% neq 0 (
-    echo.
-    echo [error] Deploy failed with exit code %ERRORLEVEL%.
-    pause
-    exit /b %ERRORLEVEL%
-)
+@REM if %ERRORLEVEL% neq 0 (
+@REM     echo.
+@REM     echo [error] Deploy failed with exit code %ERRORLEVEL%.
+@REM     pause
+@REM     exit /b %ERRORLEVEL%
+@REM )
 
-pause
+@REM pause

@@ -13,8 +13,8 @@ import { format } from 'date-fns';
 interface AuditEntry {
   id: string;
   action: string;
-  beforeState: Record<string, unknown> | null;
-  afterState: Record<string, unknown> | null;
+  beforeState: Record<string, { status?: string }> | null;
+  afterState: Record<string, { status?: string }> | null;
   reason: string | null;
   actor: { fullName: string; role: string };
   createdAt: string;
@@ -81,7 +81,7 @@ export function ReferralTimeline({ logs }: Props) {
               <Chip
                 size="small"
                 variant="outlined"
-                color={ACTION_COLOR[log.action] ?? 'default'}
+                color={ACTION_COLOR[log.action] === 'grey' ? "default" : 'default'}
                 label={ACTION_LABEL[log.action] ?? log.action}
               />
               {log.action === 'STATUS_CHANGED' &&

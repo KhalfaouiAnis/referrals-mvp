@@ -9,8 +9,8 @@ spec:
   selector:
     matchLabels:
       app: minio
-    strategy:
-      type: Recreate
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
@@ -59,10 +59,10 @@ spec:
           limits:
             cpu: "500m"
             memory: "1Gi"
-    volumes:
-    - name: minio-storage
-      persistentVolumeClaom:
-        claimName: minio-pvc
+      volumes:
+      - name: minio-storage
+        persistentVolumeClaim:
+          claimName: minio-pvc
 ---
 apiVersion: v1
 kind: Service

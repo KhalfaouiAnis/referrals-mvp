@@ -24,6 +24,7 @@
       "msgpackr-extract"
     ]
   },
+  "packageManager": "pnpm@10.16.1",
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=9.0.0"

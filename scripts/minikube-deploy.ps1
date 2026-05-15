@@ -133,7 +133,28 @@ kubectl rollout status deployment/web -n referrals --timeout=60s
 
 # Update C:\Windows\System32\drivers\etc\hosts
 $HostsFile = "$env:SystemRoot\System32\drivers\etc\hosts"
-$HostsLine = "$MinikubeIP referrals.local minio.referrals.local"
+# With the Docker driver on Windows the Minikube IP is inside Docker's
+# internal network and is not routable from the Windows host.
+# minikube tunnel maps ingress to 127.0.0.1, so that is the correct
+# address to write to the hosts file.  All other drivers (hyperv,
+# virtualbox, etc.) expose the Minikube IP directly.
+$minikubeDriver = minikube profile list -o json 2>$null |
+    ConvertFrom-Json |
+    Select-Object -ExpandProperty valid |
+    Where-Object { $_.Name -eq (minikube profile) } |
+    Select-Object -ExpandProperty Config |
+    Select-Object -ExpandProperty Driver
+ 
+if ($minikubeDriver -eq 'docker') {
+    $HostsIP = '127.0.0.1'
+    Write-Warn "Docker driver detected: hosts file will use 127.0.0.1."
+    Write-Warn "You MUST run 'minikube tunnel' (as Administrator) in a"
+    Write-Warn "separate terminal before the app will be reachable."
+} else {
+    $HostsIP = $MinikubeIP
+}
+ 
+$HostsLine = "$HostsIP referrals.local minio.referrals.local"
 
 $existing = Get-Content $HostsFile -ErrorAction SilentlyContinue
 if ($existing -match 'referrals\.local') {
@@ -165,7 +186,7 @@ if ($existing -match 'referrals\.local') {
 Write-Step "Running database seed..."
 $apiPod = kubectl get pod -n referrals -l app=api -o jsonpath='{.items[0].metadata.name}'
 if ($apiPod) {
-    kubectl exec -n referrals $apiPod -- node dist/seed/seed.js
+    kubectl exec -n referrals $apiPod -- node /app/apps/api/dist/seed/seed.js
     if ($LASTEXITCODE -ne 0) {
         Write-Warn "Seed returned a non-zero exit code (may have already run — non-fatal)."
     }
@@ -191,4 +212,3 @@ Write-Host "    kubectl get pods -n referrals"
 Write-Host "    kubectl logs -n referrals -l app=api -f"
 Write-Host "    kubectl logs -n referrals -l app=web -f"
 Write-Host "    minikube dashboard"
-Write-Host ""

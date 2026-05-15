@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 :: minikube-deploy.bat
 :: Launcher for minikube-deploy.ps1
 ::

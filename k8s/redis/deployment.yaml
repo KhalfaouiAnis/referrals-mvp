@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: redis
-        image: redis:alpine
+        image: redis:7-alpine
         ports:
         - containerPort: 6379
         args: [ "--save", "60", "1", "--loglevel", "warning" ]

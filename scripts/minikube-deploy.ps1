@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Deploys the Referrals MVP to a local Minikube cluster on Windows.

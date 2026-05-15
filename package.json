@@ -17,6 +17,13 @@
   "devDependencies": {
     "typescript": "^5.4.5"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@scarf/scarf",
+      "msgpackr-extract"
+    ]
+  },
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=9.0.0"

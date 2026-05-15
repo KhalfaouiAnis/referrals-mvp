@@ -10,6 +10,7 @@ referrals/
 ├── apps/api/          NestJS backend — REST + WebSocket + BullMQ workers
 └── apps/web/          React + Vite frontend — MUI, React Query, Zustand
 └── k8s                Kubernetes deployments
+└── scripts            helper scripts to deploy infrastructure on minikube locally on windows
 ```
 
 ## Tech stack
@@ -19,7 +20,7 @@ referrals/
 | Backend | NestJS, TypeORM, PostgreSQL |
 | Queue | BullMQ + Redis |
 | Auth | JWT (passport-jwt) |
-| Frontend | React 18, Vite, MUI v5, MUI DataGrid |
+| Frontend | React 19, Vite, MUI v7, MUI DataGrid |
 | Data fetching | TanStack React Query v5 |
 | Forms | react-hook-form + Zod |
 | State | Zustand |
@@ -39,7 +40,7 @@ referrals/
 ### 1. Clone and install
 
 ```bash
-git clone <repo-url> && cd referrals
+git clone https://github.com/KhalfaouiAnis/referrals-mvp.git && cd referrals
 cp .env.example .env
 pnpm install
 ```
@@ -48,7 +49,7 @@ pnpm install
 
 ```bash
 # Start Postgres + Redis + minio only (for local dev)
-docker-compose up postgres redis -d
+docker-compose up -d
 ```
 
 ### 3. Run migrations + seed
@@ -82,12 +83,12 @@ docker-compose up --build
 
 ## Default credentials (seed data)
 
-| Role | Email | Password |
-|---|---|---|
-| Physician | sarah.chen@clinic.com | password123 |
-| Nurse Practitioner | priya.patel@clinic.com | password123 |
-| Specialist | j.hartley@cardiology.com | password123 |
-| Admin | admin@clinic.com | password123 |
+| Role               | Email                    | Password    |
+|--------------------|--------------------------|-------------|
+| Physician          | sarah.chen@clinic.com    | password123 |
+| Nurse Practitioner | priya.patel@clinic.com   | password123 |
+| Specialist         | j.hartley@cardiology.com | password123 |
+| Admin              | admin@clinic.com         | password123 |
 
 ---
 
@@ -175,14 +176,14 @@ VITE_WS_URL=http://localhost:3000
 
 ## RBAC
 
-| Action | PHYSICIAN | NP | ADMIN_STAFF | SPECIALIST |
-|---|---|---|---|---|
-| Create referral | ✅ | ✅ | ❌ | ❌ |
-| Advance status | ✅ | ✅ | ✅ | ✅ |
-| Add note | ✅ | ✅ | ✅ | ✅ |
-| Upload document | ✅ | ✅ | ✅ | ✅ |
-| Bulk actions | ❌ | ❌ | ✅ | ❌ |
-| View analytics | ✅ | ✅ | ✅ | ❌ |
+| Action          | PHYSICIAN | NP  | ADMIN_STAFF | SPECIALIST |
+|-----------------|-----------|-----|-------------|------------|
+| Create referral |     ✅    | ✅ |      ❌     |    ❌     |
+| Advance status  |     ✅    | ✅ |      ✅     |    ✅     |
+| Add note        |     ✅    | ✅ |      ✅     |    ✅     |
+| Upload document |     ✅    | ✅ |      ✅     |    ✅     |
+| Bulk actions    |     ❌    | ❌ |      ✅     |    ❌     |
+| View analytics  |     ✅    | ✅ |      ✅     |    ❌     |
 
 ---
 
@@ -197,7 +198,7 @@ VITE_WS_URL=http://localhost:3000
 
 ```bash
 # From repo root — builds images inside minikube, applies all manifests, seeds DB
-./scripts/minikube-deploy.sh
+./scripts/minikube-deploy.ps1 || double click the .bat file
 ```
 
 The script:
@@ -210,12 +211,12 @@ The script:
 
 ### URLs after deploy
 
-| Service | URL |
-|---|---|
-| Web app | http://referrals.local |
-| Swagger docs | http://referrals.local/api/docs |
-| MinIO console | http://minio.referrals.local |
-| Health check | http://referrals.local/api/v1/health |
+|    Service    |                  URL                 |
+|---------------|--------------------------------------|
+| Web app       | http://referrals.local               |
+| Swagger docs  | http://referrals.local/api/docs      |
+| MinIO console | http://minio.referrals.local         |
+| Health check  | http://referrals.local/api/v1/health |
 
 ### Useful kubectl commands
 
@@ -233,12 +234,11 @@ kubectl logs -n referrals -l app=api -f --container api
 minikube dashboard
 
 # Restart API after image rebuild
-eval $(minikube docker-env)
 docker build -t referrals-api:latest -f apps/api/Dockerfile .
 kubectl rollout restart deployment/api -n referrals
 
 # Teardown (keeps minikube cluster)
-./scripts/minikube-teardown.sh
+./scripts/minikube-teardown.ps1
 ```
 
 ### K8s manifest structure
@@ -250,17 +250,17 @@ k8s/
 ├── secrets.yaml           passwords + JWT secret (use Sealed Secrets in prod)
 ├── ingress.yaml           nginx ingress — routes referrals.local
 ├── postgres/
-│   ├── deployment.yaml    postgres:16-alpine + ClusterIP service
-│   └── persistent-volume-claim.yaml  5 Gi RWO PVC
+│   ├── deployment.yaml    postgres:17-alpine + ClusterIP service
+│   └── persistent-volume-claim.yaml  1 Gi RWO PVC
 ├── redis/
 │   └── deployment.yaml    redis:7-alpine + ClusterIP service
 ├── minio/
 │   ├── deployment.yaml    minio/minio:latest + ClusterIP service (ports 9000 + 9001)
-│   └── persistent-volume-claim.yaml  10 Gi RWO PVC
+│   └── persistent-volume-claim.yaml  1 Gi RWO PVC
 ├── api/
-│   └── deployment.yaml    2 replicas + init container (migrations) + ClusterIP
+│   └── deployment.yaml    1 replica + init container (migrations) + ClusterIP
 └── web/
-    └── deployment.yaml    2 replicas nginx SPA + ClusterIP
+    └── deployment.yaml    1 replica nginx SPA + ClusterIP
 ```
 
 ### Ingress routing
@@ -296,4 +296,3 @@ MINIO_USE_SSL=false
 2. Email/SMS notifications log to console in development. Wire `EmailChannel` / `SmsChannel` with real credentials.
 3. Insurance authorization is simulated — no live EDI/payer API integration.
 4. `synchronize: false` — always use migrations; never let TypeORM auto-sync the schema in production.
-5. The `icd10Codes` field stores comma-separated strings. A junction table is recommended for larger-scale systems.

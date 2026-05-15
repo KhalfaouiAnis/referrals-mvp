@@ -6,11 +6,11 @@ Follow these steps **in order** every time you set up on a new machine or after 
 
 ## 1. Prerequisites
 
-| Tool | Version | Install |
-|---|---|---|
-| Node.js | ≥ 20 | https://nodejs.org |
-| pnpm | ≥ 9 | `npm i -g pnpm` |
-| Docker Desktop | any | https://www.docker.com/products/docker-desktop |
+| Tool           |      Version |                Install                         |
+|----------------|--------------|------------------------------------------------|
+| Node.js        | ≥ 20         | https://nodejs.org                             |
+| pnpm           | ≥ 9          | `npm i -g pnpm`                                |
+| Docker Desktop | any          | https://www.docker.com/products/docker-desktop |
 
 ---
 
@@ -26,13 +26,13 @@ pnpm install
 ## 3. Start infrastructure (Postgres + Redis + MinIO)
 
 ```bash
-docker compose -f docker-compose.dev.yml up -d
+docker compose up -d
 ```
 
 Wait ~10 seconds for Postgres to be healthy, then verify:
 
 ```bash
-docker compose -f docker-compose.dev.yml ps
+docker compose ps
 # All three services should show "healthy" or "running"
 ```
 
@@ -58,7 +58,7 @@ The API imports `@referrals/shared` from its compiled `dist/`. You must build it
 pnpm build:shared
 ```
 
-> **Why?** Vite (web) reads `@referrals/shared` directly from TypeScript source and
+> Vite (web) reads `@referrals/shared` directly from TypeScript source and
 > handles compilation itself. NestJS (API) uses the TypeScript compiler which needs
 > the compiled `.js` + `.d.ts` files. You only need to re-run `build:shared` when
 > you change something inside `packages/shared/src/`.
@@ -73,7 +73,7 @@ pnpm migration:run
 
 ---
 
-## 7. Seed the database (optional but recommended)
+## 7. Seed the database
 
 ```bash
 pnpm seed
@@ -99,22 +99,17 @@ pnpm dev:api
 pnpm dev:web
 ```
 
-Or start both with one command (requires `concurrently`):
-```bash
-pnpm dev
-```
-
 ---
 
 ## 9. Log in
 
 Visit **http://localhost:5173** and log in with:
 
-| Role | Email | Password |
-|---|---|---|
-| Physician | sarah.chen@clinic.com | password123 |
-| Admin staff | admin@clinic.com | password123 |
-| Specialist | j.hartley@cardiology.com | password123 |
+| Role               | Email                    | Password    |
+|--------------------|--------------------------|-------------|
+| Physician          | sarah.chen@clinic.com    | password123 |
+| Nurse Practitioner | priya.patel@clinic.com   | password123 |
+| Specialist         | j.hartley@cardiology.com | password123 |
 
 Swagger API docs: **http://localhost:3000/api/docs**
 
@@ -128,7 +123,7 @@ Swagger API docs: **http://localhost:3000/api/docs**
 
 ### `connect ECONNREFUSED 127.0.0.1:5432`
 **Cause:** Postgres container isn't running.
-**Fix:** `docker compose -f docker-compose.dev.yml up -d`
+**Fix:** `docker compose up -d`
 
 ### `relation "referrals" does not exist`
 **Cause:** Migrations haven't been run yet.

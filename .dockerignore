@@ -6,6 +6,9 @@ dist/
 build/
 packages/shared/dist/
 
+uploads/
+apps/api/uploads/
+
 .env
 .env.*
 !.env.example

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# Referrals MVP — Minikube deployment script
+# Referrals — Minikube deployment script
 # Usage: ./scripts/minikube-deploy.sh [--reset]
 # =============================================================================
 set -euo pipefail
@@ -14,18 +14,18 @@ log()  { echo -e "${GREEN}[deploy]${NC} $*"; }
 warn() { echo -e "${YELLOW}[warn]${NC}  $*"; }
 die()  { echo -e "${RED}[error]${NC} $*"; exit 1; }
 
-# ── Prerequisites ─────────────────────────────────────────────────────────────
+# Prerequisites
 for cmd in minikube kubectl docker pnpm; do
   command -v "$cmd" &>/dev/null || die "'$cmd' is not installed."
 done
 
-# ── Optional reset ────────────────────────────────────────────────────────────
+# Optional reset
 if [[ "${1:-}" == "--reset" ]]; then
   warn "Deleting existing minikube cluster…"
   minikube delete || true
 fi
 
-# ── Start minikube ────────────────────────────────────────────────────────────
+# Start minikube
 if ! minikube status &>/dev/null; then
   log "Starting minikube (4 CPUs, 6 GB RAM)…"
   minikube start \
@@ -42,14 +42,14 @@ else
   minikube addons enable metrics-server 2>/dev/null || true
 fi
 
-# ── Point Docker daemon to minikube's internal registry ──────────────────────
+# Point Docker daemon to minikube's internal registry
 log "Pointing Docker to minikube registry…"
 eval "$(minikube docker-env)"
 
 MINIKUBE_IP=$(minikube ip)
 log "Minikube IP: ${MINIKUBE_IP}"
 
-# ── Build images inside minikube ──────────────────────────────────────────────
+# Build images inside minikube
 log "Building API image…"
 docker build \
   -t referrals-api:latest \
@@ -64,7 +64,7 @@ docker build \
   --build-arg VITE_WS_URL="http://referrals.local" \
   "${REPO_ROOT}"
 
-# ── Apply K8s manifests ───────────────────────────────────────────────────────
+# Apply K8s manifests
 log "Applying Kubernetes manifests…"
 kubectl apply -f "${K8S_DIR}/namespace.yaml"
 kubectl apply -f "${K8S_DIR}/configmap.yaml"
@@ -92,7 +92,7 @@ log "Waiting for application pods to be ready…"
 kubectl rollout status deployment/api -n "${NAMESPACE}" --timeout=180s
 kubectl rollout status deployment/web -n "${NAMESPACE}" --timeout=60s
 
-# ── /etc/hosts entry ──────────────────────────────────────────────────────────
+# /etc/hosts entry
 HOSTS_LINE="${MINIKUBE_IP} referrals.local minio.referrals.local"
 
 if grep -q "referrals.local" /etc/hosts; then
@@ -104,16 +104,16 @@ else
   log "Added: ${HOSTS_LINE}"
 fi
 
-# ── Run seed (once) ───────────────────────────────────────────────────────────
+# Run seed (once)
 log "Running database seed via kubectl exec…"
 API_POD=$(kubectl get pod -n "${NAMESPACE}" -l app=api -o jsonpath='{.items[0].metadata.name}')
 kubectl exec -n "${NAMESPACE}" "${API_POD}" -- \
-  node dist/seed/seed.js 2>/dev/null || warn "Seed may have already run (non-fatal)."
+  node /app/apps/api/dist/seed/seed.js 2>/dev/null || warn "Seed may have already run (non-fatal)."
 
-# ── Done ──────────────────────────────────────────────────────────────────────
+# Done
 echo ""
 echo -e "${GREEN}╔══════════════════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}║           Referrals MVP — deployed on minikube       ║${NC}"
+echo -e "${GREEN}║           Referrals — deployed on minikube       ║${NC}"
 echo -e "${GREEN}╠══════════════════════════════════════════════════════╣${NC}"
 echo -e "${GREEN}║${NC}  Web app       http://referrals.local                ${GREEN}║${NC}"
 echo -e "${GREEN}║${NC}  API docs      http://referrals.local/api/docs       ${GREEN}║${NC}"

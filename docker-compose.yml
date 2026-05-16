@@ -56,7 +56,23 @@ services:
       retries: 10
       start_period: 10s
 
+  # clamav:
+  #   image: clamav/clamav:latest
+  #   ports:
+  #     - "3310:3310"
+  #   volumes:
+  #     - clamav_data:/var/lib/clamav
+  #   environment:
+  #     - CLAMAV_NO_FRESHCLAMD=false # auto-update virus DB
+  #   healthcheck:
+  #     test: ["CMD", "clamdscan", "--ping", "3"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 120s
+
 volumes:
   postgres_dev_data:
   redis_dev_data:
   minio_dev_data:
+  # clamav_data:

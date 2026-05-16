@@ -11,20 +11,20 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { Response } from 'express';
-import { ApiTags, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
-import { memoryStorage } from 'multer';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../../common/guards/roles.guard';
-import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { Roles } from '../../common/decorators/roles.decorator';
-import { User } from '../users/entities/user.entity';
-import { UserRole } from '@referrals/shared';
-import { ReferralsService } from './referrals.service';
-import { DocumentsService } from '../documents/documents.service';
-import { ReferralWorkflowService } from './referral-workflow.service';
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { Response } from "express";
+import { ApiTags, ApiBearerAuth, ApiConsumes } from "@nestjs/swagger";
+import { memoryStorage } from "multer";
+import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { RolesGuard } from "../../common/guards/roles.guard";
+import { CurrentUser } from "../../common/decorators/current-user.decorator";
+import { Roles } from "../../common/decorators/roles.decorator";
+import { User } from "../users/entities/user.entity";
+import { UserRole } from "@referrals/shared";
+import { ReferralsService } from "./referrals.service";
+import { DocumentsService } from "../documents/documents.service";
+import { ReferralWorkflowService } from "./referral-workflow.service";
 import {
   AddNoteDto,
   AdvanceStepDto,
@@ -32,12 +32,13 @@ import {
   CreateReferralDto,
   ReferralFilterDto,
   UpdateReferralDto,
-} from './dto/referral.dto';
+} from "./dto/referral.dto";
+// import { ScanInterceptor } from "../documents/scan.interceptor";
 
-@ApiTags('referrals')
+@ApiTags("referrals")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('referrals')
+@Controller("referrals")
 export class ReferralsController {
   constructor(
     private readonly referralsService: ReferralsService,
@@ -56,34 +57,34 @@ export class ReferralsController {
     return this.referralsService.findAll(filters);
   }
 
-  @Get('export')
+  @Get("export")
   async exportCsv(
     @Query() filters: ReferralFilterDto,
     @Res() res: Response,
   ): Promise<void> {
     const csv = await this.referralsService.exportCsv(filters);
-    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader("Content-Type", "text/csv");
     res.setHeader(
-      'Content-Disposition',
+      "Content-Disposition",
       `attachment; filename="referrals-${Date.now()}.csv"`,
     );
     res.send(csv);
   }
 
-  @Post('bulk')
+  @Post("bulk")
   @Roles(UserRole.ADMIN_STAFF, UserRole.SUPER_ADMIN)
   bulkAction(@Body() dto: BulkActionDto, @CurrentUser() user: User) {
     return this.referralsService.bulkAction(dto, user);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.referralsService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch(":id")
   update(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() dto: UpdateReferralDto,
     @CurrentUser() user: User,
   ) {
@@ -92,9 +93,9 @@ export class ReferralsController {
 
   // Workflow
 
-  @Patch(':id/advance')
+  @Patch(":id/advance")
   advance(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() dto: AdvanceStepDto,
     @CurrentUser() user: User,
   ) {
@@ -108,9 +109,9 @@ export class ReferralsController {
 
   // Notes
 
-  @Post(':id/notes')
+  @Post(":id/notes")
   addNote(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() dto: AddNoteDto,
     @CurrentUser() user: User,
   ) {
@@ -119,32 +120,33 @@ export class ReferralsController {
 
   // Documents
 
-  @Post(':id/documents')
-  @ApiConsumes('multipart/form-data')
+  @Post(":id/documents")
+  @ApiConsumes("multipart/form-data")
   @UseInterceptors(
-    FileInterceptor('file', { storage: memoryStorage() }),
+    FileInterceptor("file", { storage: memoryStorage() }),
+    // ScanInterceptor,
   )
   uploadDocument(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @UploadedFile() file: Express.Multer.File,
-    @Body('label') label: string | undefined,
+    @Body("label") label: string | undefined,
     @CurrentUser() user: User,
   ) {
     return this.documentsService.upload(id, file, label, user);
   }
 
-  @Get(':id/documents/:docId/download')
+  @Get(":id/documents/:docId/download")
   getDownloadUrl(
-    @Param('id') referralId: string,
-    @Param('docId') docId: string,
+    @Param("id") referralId: string,
+    @Param("docId") docId: string,
   ) {
     return this.documentsService.getSignedDownloadUrl(referralId, docId);
   }
 
-  @Delete(':id/documents/:docId')
+  @Delete(":id/documents/:docId")
   deleteDocument(
-    @Param('id') referralId: string,
-    @Param('docId') docId: string,
+    @Param("id") referralId: string,
+    @Param("docId") docId: string,
     @CurrentUser() user: User,
   ) {
     return this.documentsService.delete(referralId, docId, user);

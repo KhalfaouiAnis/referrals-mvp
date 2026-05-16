@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
+// import { ClamScanService } from 'nestjs-clamscan';
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { v4 as uuid } from "uuid";
@@ -13,13 +14,14 @@ import { Referral } from "../referrals/entities/referral.entity";
 import { AuditLog } from "../audit/entities/audit-log.entity";
 import { User } from "../users/entities/user.entity";
 import { STORAGE_PROVIDER, StorageProvider } from "./storage/storage.interface";
+// import { InfectedFileException } from "./exceptions/infected-file.exception";
+// import { Readable } from "stream";
 
 const ALLOWED_MIME_TYPES = new Set([
   "application/pdf",
   "image/jpeg",
   "image/png",
   "image/webp",
-  "application/msword",
 ]);
 
 const MAX_SIZE_BYTES = 25 * 1024 * 1024; // 25 MB
@@ -38,6 +40,8 @@ export class DocumentsService {
 
     @Inject(STORAGE_PROVIDER)
     private readonly storage: StorageProvider,
+
+    // private readonly clamScan: ClamScanService,
   ) {}
 
   async upload(
@@ -56,12 +60,15 @@ export class DocumentsService {
     // Validate file
     if (!ALLOWED_MIME_TYPES.has(file.mimetype)) {
       throw new BadRequestException(
-        `File type '${file.mimetype}' is not allowed. Accepted: PDF, JPEG, PNG, WEBP, DOC.`,
+        `File type '${file.mimetype}' is not allowed. Accepted: PDF, JPEG, PNG, WEBP.`,
       );
     }
     if (file.size > MAX_SIZE_BYTES) {
       throw new BadRequestException("File exceeds the 25 MB size limit.");
     }
+
+    // Virus scan — throws InfectedFileException before touching MinIO
+    // await this.scanOrThrow(file);
 
     // Build an object key: referralId/uuid-filename
     const ext = file.originalname.split(".").pop() ?? "bin";
@@ -144,4 +151,12 @@ export class DocumentsService {
       }),
     );
   }
+
+  // private async scanOrThrow(file: Express.Multer.File): Promise<void> {
+  //   const stream = Readable.from(file.buffer);
+  //   const { isInfected, viruses } = await this.clamScan.scanStream(stream);
+  //   if (isInfected) {
+  //     throw new InfectedFileException(file.originalname, viruses ?? []);
+  //   }
+  // }
 }

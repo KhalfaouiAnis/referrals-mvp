@@ -15,12 +15,19 @@ import { QueuesModule } from "./modules/queues/queues.module";
 import { AnalyticsModule } from "./modules/analytics/analytics.module";
 import { GatewayModule } from "./modules/gateway/gateway.module";
 import { HealthController } from "./health.controller";
+// import clamavConfig from "./config/clamav.config";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, redisConfig, storageConfig, jwtConfig],
+      load: [
+        databaseConfig,
+        redisConfig,
+        storageConfig,
+        // clamavConfig,
+        jwtConfig,
+      ],
       envFilePath: [".env"],
     }),
     TypeOrmModule.forRootAsync({

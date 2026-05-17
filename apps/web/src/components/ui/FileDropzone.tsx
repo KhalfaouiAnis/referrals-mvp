@@ -26,7 +26,7 @@ interface UploadState {
 
 export function FileDropzone({
   onUpload,
-  accept = '.pdf,.jpg,.jpeg,.png,.doc,.docx',
+  accept = '.pdf,.jpg,.jpeg,.png',
   maxSizeMb = 25,
   disabled = false,
 }: FileDropzoneProps) {
@@ -139,12 +139,12 @@ export function FileDropzone({
                   )}
                   {u.error && (
                     <Typography variant="caption" color="error">
-                      {u.error}
+                      {" "}{u.error}
                     </Typography>
                   )}
                   {u.done && (
                     <Typography variant="caption" color="success.main">
-                      Uploaded ✓
+                      {" "}Uploaded ✓
                     </Typography>
                   )}
                 </Box>

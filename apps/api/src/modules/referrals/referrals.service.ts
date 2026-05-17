@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, SelectQueryBuilder } from "typeorm";
 import { Referral } from "./entities/referral.entity";
 import { ReferralNote } from "./entities/referral-note.entity";
-import { AuditLog } from "../audit/entities/audit-log.entity";
 import { User } from "../users/entities/user.entity";
 import {
   AddNoteDto,
@@ -25,14 +24,12 @@ export class ReferralsService {
     @InjectRepository(ReferralNote)
     private readonly noteRepo: Repository<ReferralNote>,
 
-    @InjectRepository(AuditLog)
-    private readonly auditRepo: Repository<AuditLog>,
-
     private readonly workflowService: ReferralWorkflowService,
     private readonly auditService: AuditService,
   ) {}
 
   async create(dto: CreateReferralDto, actor: User): Promise<Referral> {
+    
     const referral = this.referralRepo.create({
       ...dto,
       referringProviderId: actor.id,
@@ -50,6 +47,14 @@ export class ReferralsService {
       action: "REFERRAL_CREATED",
       after: { status: saved.status, specialtyType: saved.specialtyType },
     });
+
+    // TODO
+    // if (!dto.specialistId) {
+    //   await this.referralQueue.add("MANUAL_SPECIALIST_ASSIGNMENT_NEEDED", {
+    //     referralId: saved.id,
+    //     specialtyType: dto.specialtyType,
+    //   });
+    // }
 
     return this.findOne(saved.id);
   }

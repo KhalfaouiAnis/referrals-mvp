@@ -10,10 +10,10 @@ interface ReferralUpdatedEvent {
 let socket: Socket | null = null;
 
 export function connectWebSocket(): () => void {
-  // const wsUrl = import.meta.env.VITE_WS_URL ?? "http://localhost:3000";
+  const wsUrl = import.meta.env.VITE_WS_URL ?? "http://localhost:3000";
   const token = localStorage.getItem("access_token");
 
-  socket = io(undefined, {
+  socket = io(wsUrl, {
     auth: { token },
     transports: ["websocket"],
     reconnectionAttempts: 5,
@@ -29,6 +29,8 @@ export function connectWebSocket(): () => void {
   });
 
   socket.on("referral:updated", (event: ReferralUpdatedEvent) => {
+    console.log("Socket event: referral updated...");
+    
     void queryClient.invalidateQueries({
       queryKey: referralKeys.detail(event.referralId),
     });

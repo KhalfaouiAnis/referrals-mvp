@@ -20,9 +20,11 @@ import { ReferralsDataGrid } from './components/ReferralsDataGrid';
 import { GridRowSelectionModel } from '@mui/x-data-grid';
 import { useUiStore } from '../../store/ui.store';
 import { useBulkAction, useExportReferrals, useReferrals } from '../../api/hooks/useReferrals';
+import { isAxiosError } from 'axios';
 
 export function ReferralsListPage() {
   const navigate = useNavigate();
+  const showToast = useUiStore((state) => state.showToast);
   const { referralFilters, setReferralFilters, resetReferralFilters } = useUiStore();
   const [selectedIds, setSelectedIds] = useState<GridRowSelectionModel>({ ids: new Set([]), type: "include" });
   const [search, setSearch] = useState('');
@@ -154,12 +156,11 @@ export function ReferralsListPage() {
               <Button
                 size="small"
                 disabled={bulkPending}
-                onClick={() =>
-                  bulkAction({
-                    referralIds: selectedIds.ids,
-                    action: 'SET_PRIORITY',
-                    payload: { priority: ReferralPriority.URGENT },
-                  })
+                onClick={() => bulkAction({
+                  referralIds: selectedIds.ids,
+                  action: 'SET_PRIORITY',
+                  payload: { priority: ReferralPriority.URGENT },
+                })
                 }
               >
                 Mark urgent

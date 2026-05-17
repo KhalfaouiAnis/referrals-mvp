@@ -19,7 +19,7 @@ export function Step3Documents() {
         imaging reports, clinical notes, and medication lists.
       </Alert>
       <Typography variant="body2" color="text.secondary">
-        Accepted formats: PDF, JPG, PNG, DOC, DOCX — max 25 MB per file.
+        Accepted formats: PDF, JPG, JPEG, PNG — max 25 MB per file.
       </Typography>
     </Stack>
   );

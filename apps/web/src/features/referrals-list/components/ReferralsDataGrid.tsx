@@ -31,6 +31,9 @@ const COLUMNS: GridColDef<ReferralListItem>[] = [
   {
     field: 'patientName',
     headerName: 'Patient',
+    getOptionLabel(value: any) {
+      return value.fullName
+    },
     flex: 1.5,
     minWidth: 160,
   },

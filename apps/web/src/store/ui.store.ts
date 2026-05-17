@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { ReferralFilterParams } from "@referrals/shared";
+import { AlertColor } from "@mui/material";
 
 interface UiState {
   sidebarOpen: boolean;
@@ -9,9 +10,13 @@ interface UiState {
   setReferralFilters: (filters: Partial<ReferralFilterParams>) => void;
   resetReferralFilters: () => void;
 
-  advanceStatusModal: { open: boolean; referralId: string | null };
-  openAdvanceStatusModal: (referralId: string) => void;
-  closeAdvanceStatusModal: () => void;
+  toast: {
+    open: boolean;
+    message: string;
+    severity: AlertColor;
+  };
+  showToast: (message: string, severity?: AlertColor) => void;
+  closeToast: () => void;
 }
 
 const DEFAULT_FILTERS: ReferralFilterParams = {
@@ -28,13 +33,13 @@ export const useUiStore = create<UiState>()((set) => ({
   referralFilters: DEFAULT_FILTERS,
   setReferralFilters: (filters) =>
     set((s) => ({
-      referralFilters: { ...s.referralFilters, ...filters, page: 1 },
+      referralFilters: { ...s.referralFilters, ...filters },
     })),
   resetReferralFilters: () => set({ referralFilters: DEFAULT_FILTERS }),
-
-  advanceStatusModal: { open: false, referralId: null },
-  openAdvanceStatusModal: (referralId) =>
-    set({ advanceStatusModal: { open: true, referralId } }),
-  closeAdvanceStatusModal: () =>
-    set({ advanceStatusModal: { open: false, referralId: null } }),
+  toast: { open: false, message: "", severity: "info" },
+  showToast: (message, severity = "info") =>
+    set({ toast: { open: true, message, severity } }),
+  closeToast: () => set((s) => ({ toast: { ...s.toast, open: false } })),
 }));
+
+export default useUiStore

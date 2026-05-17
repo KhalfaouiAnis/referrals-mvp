@@ -15,6 +15,9 @@ import { QueuesModule } from "./modules/queues/queues.module";
 import { AnalyticsModule } from "./modules/analytics/analytics.module";
 import { GatewayModule } from "./modules/gateway/gateway.module";
 import { HealthController } from "./health.controller";
+import { APP_GUARD } from "@nestjs/core";
+import { JwtAuthGuard } from "./common/guards/jwt-auth.guard";
+import { RolesGuard } from "./common/guards/roles.guard";
 // import clamavConfig from "./config/clamav.config";
 
 @Module({
@@ -45,5 +48,15 @@ import { HealthController } from "./health.controller";
     GatewayModule,
   ],
   controllers: [HealthController],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}

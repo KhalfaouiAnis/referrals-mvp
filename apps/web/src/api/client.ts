@@ -4,6 +4,7 @@ import axios, {
   type AxiosResponse,
 } from "axios";
 import qs from "qs";
+import useUiStore from "../store/ui.store";
 
 export const apiClient = axios.create({
   baseURL: "",
@@ -33,6 +34,14 @@ apiClient.interceptors.response.use(
         window.location.href = "/login";
       }
     }
+    if (error.response?.status === 403) {
+      const errorMessage =
+        (error.response?.data?.message as string) ||
+        error.message ||
+        "An unexpected network error occurred.";
+      useUiStore.getState().showToast(errorMessage, "error");
+    }
+
     return Promise.reject(error);
   },
 );

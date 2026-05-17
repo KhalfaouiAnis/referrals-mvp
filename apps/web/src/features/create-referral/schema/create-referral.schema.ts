@@ -3,7 +3,7 @@ import { ReferralPriority, SpecialtyType } from "@referrals/shared";
 
 // Step 1
 export const step1Schema = z.object({
-  patientId: z.string().uuid("Please select a patient."),
+  patientId: z.string().uuid("Please select a patient.").min(3),
   specialtyType: z.nativeEnum(SpecialtyType, {
     errorMap: () => ({ message: "Please select a specialty." }),
   }),

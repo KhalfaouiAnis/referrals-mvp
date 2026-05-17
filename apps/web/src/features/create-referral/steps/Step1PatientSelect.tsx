@@ -5,6 +5,7 @@ import { useState } from "react";
 import { usePatientSearch } from "../../../api/hooks/usePatients";
 import { Autocomplete, Box, Stack, TextField, Typography } from "@mui/material";
 import { FormSelect } from "../../../components/ui/FormSelect";
+import { PatientSearchResult } from "src/api/services/patients.service";
 
 const SPECIALTY_OPTIONS = Object.values(SpecialtyType).map((v) => ({
     label: v.charAt(0) + v.slice(1).toLowerCase().replace(/_/g, ' '),
@@ -16,12 +17,12 @@ interface Props {
 }
 
 export function Step1PatientSelect({ control }: Props) {
+    const [selectedPatient, setSelectedPatient] = useState<PatientSearchResult | null>(null);
     const [inputValue, setInputValue] = useState('');
     const { data: searchData, isFetching } = usePatientSearch(inputValue);
     const patients = searchData?.data ?? [];
 
     const { field: patientField, fieldState: patientState } = useController({ control, name: "patientId" });
-    const selectedPatient = patients.find((p) => p.id === patientField.value) ?? null;
 
     return (
         <Stack spacing={3}>
@@ -29,21 +30,26 @@ export function Step1PatientSelect({ control }: Props) {
                 <Typography variant="subtitle2" gutterBottom>Patient *</Typography>
                 <Autocomplete
                     options={patients}
-                    getOptionLabel={p => `${p.fullName} - MRN: ${p.mrn}`}
-                    isOptionEqualToValue={(opt, val) => opt.id === val.id}
                     loading={isFetching}
                     value={selectedPatient}
                     inputValue={inputValue}
-                    onInputChange={(_, v) => setInputValue(v)}
+                    getOptionLabel={p => `${p.fullName} - MRN: ${p.mrn}`}
+                    isOptionEqualToValue={(opt, val) => opt.id === val.id}
+                    onInputChange={(_, v, reason) => {
+                        if (reason === 'input') setInputValue(v);
+                        if (reason === 'reset') setInputValue(v);
+                    }}
                     onChange={(_, patient) => {
                         patientField.onChange(patient?.id ?? '');
+                        setSelectedPatient(patient);
+                        if (!patient) setInputValue('');
                     }}
                     renderInput={(params) => (
                         <TextField
                             {...params}
                             size="small"
-                            placeholder="Search by name or MRN..."
                             error={Boolean(patientState.error)}
+                            placeholder="Search by name or MRN..."
                             helperText={patientState.error?.message ?? 'Type at least 2 characters'}
                         />
                     )}

@@ -53,16 +53,17 @@ export class ReferralsController {
   }
 
   @Get()
-  findAll(@Query() filters: ReferralFilterDto) {
-    return this.referralsService.findAll(filters);
+  findAll(@Query() filters: ReferralFilterDto, @CurrentUser() user: User) {
+    return this.referralsService.findAll(user.id, filters);
   }
 
   @Get("export")
   async exportCsv(
     @Query() filters: ReferralFilterDto,
+    @CurrentUser() user: User,
     @Res() res: Response,
   ): Promise<void> {
-    const csv = await this.referralsService.exportCsv(filters);
+    const csv = await this.referralsService.exportCsv(user.id, filters);
     res.setHeader("Content-Type", "text/csv");
     res.setHeader(
       "Content-Disposition",

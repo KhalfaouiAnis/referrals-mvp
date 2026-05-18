@@ -128,10 +128,14 @@ export function ReferralsDataGrid({
     [onFiltersChange],
   );
 
-  // MUI X v9: GridRowSelectionModel is string[] | number[] — cast accordingly
   const handleSelectionChange = useCallback(
     (model: GridRowSelectionModel) => {
-      onSelectionChange(model);
+      if (model.type === 'exclude') {
+        const currentPageIds = new Set(rows.map((r) => r.id));
+        onSelectionChange({ type: 'include', ids: currentPageIds });
+      } else {
+        onSelectionChange(model);
+      }
     },
     [onSelectionChange],
   );
@@ -148,13 +152,15 @@ export function ReferralsDataGrid({
 
   return (
     <DataGrid
+      autoHeight
       rows={rows}
-      columns={COLUMNS}
       rowCount={total}
+      columns={COLUMNS}
       loading={loading}
-      paginationMode="server"
-      sortingMode="server"
       checkboxSelection
+
+      sortingMode="server"
+      paginationMode="server"
       disableRowSelectionOnClick={false}
       paginationModel={{
         page: (filters.page ?? 1) - 1,
@@ -166,11 +172,15 @@ export function ReferralsDataGrid({
       onSortModelChange={handleSortChange}
       onPaginationModelChange={handlePaginationChange}
       onRowClick={({ row }) => navigate(`/referrals/${row.id}`)}
-      // Styles are now in theme.ts MuiDataGrid override
+      //  hide the header checkbox
+      // sx={{
+      //   '& .MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainer': {
+      //     display: 'none',
+      //   },
+      // }}
       style={{
         border: 'none',
       }}
-      autoHeight
     />
   );
 }

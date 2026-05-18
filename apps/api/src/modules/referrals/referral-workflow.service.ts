@@ -98,7 +98,7 @@ export class ReferralWorkflowService {
     );
 
     // 4. Async side-effects (outside transaction — non-critical)
-    await this.triggerSideEffects(updatedReferral, previousStatus, actor);
+    await this.triggerSideEffects(updatedReferral);
 
     this.logger.log(
       `Referral ${referralId}: ${previousStatus} → ${targetStatus} by user ${actor.id}`,
@@ -206,8 +206,7 @@ export class ReferralWorkflowService {
    */
   private async triggerSideEffects(
     referral: Referral,
-    previousStatus: ReferralStatus,
-    actor: User,
+
   ): Promise<void> {
     try {
       switch (referral.status) {

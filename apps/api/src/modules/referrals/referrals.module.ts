@@ -16,6 +16,7 @@ import { AuditModule } from "../audit/audit.module";
 import { SpecialistMatchingService } from "./specialist-matching.service";
 import { SpecialistProfile } from "../users/entities/specialist-profile.entity";
 import { Patient } from "../patients/entities/patient.entity";
+import { GatewayModule } from "../gateway/gateway.module";
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { Patient } from "../patients/entities/patient.entity";
     QueuesModule,
     DocumentsModule,
     AuditModule,
+    GatewayModule,
   ],
   controllers: [ReferralsController],
   providers: [
@@ -40,6 +42,10 @@ import { Patient } from "../patients/entities/patient.entity";
     StepTransitionValidator,
     SpecialistMatchingService,
   ],
-  exports: [ReferralsService, ReferralWorkflowService, SpecialistMatchingService],
+  exports: [
+    ReferralsService,
+    ReferralWorkflowService,
+    SpecialistMatchingService,
+  ],
 })
 export class ReferralsModule {}

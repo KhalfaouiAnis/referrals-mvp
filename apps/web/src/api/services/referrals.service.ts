@@ -36,7 +36,7 @@ export interface ReferralDetail extends ReferralListItem {
     mrn: string;
     fullName: string;
     dateOfBirth: string;
-    // insurancePlan: string | null;
+    insurancePlan: string | null;
     insurancePlanId: string | null;
     insuranceMemberId: string | null;
     phone: string | null;
@@ -115,7 +115,7 @@ export interface AddNoteDto {
 }
 
 export interface BulkActionDto {
-  referralIds: Set<GridRowId>;
+  referralIds: (string | number)[];
   action: "SET_PRIORITY" | "REASSIGN_SPECIALIST";
   payload: Record<string, unknown>;
 }

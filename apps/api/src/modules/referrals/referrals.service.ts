@@ -16,6 +16,7 @@ import { PaginatedResult, ReferralPriority } from "@referrals/shared";
 import { AuditService } from "../audit/audit.service";
 import { Patient } from "../patients/entities/patient.entity";
 import { SpecialistMatchingService } from "./specialist-matching.service";
+import { ReferralsGateway } from "../gateway/referrals.gateway";
 
 @Injectable()
 export class ReferralsService {
@@ -29,6 +30,7 @@ export class ReferralsService {
     @InjectRepository(ReferralNote)
     private readonly noteRepo: Repository<ReferralNote>,
 
+    private readonly referralsGateway: ReferralsGateway,
     private readonly workflowService: ReferralWorkflowService,
     private readonly specialistMatchingService: SpecialistMatchingService,
     private readonly auditService: AuditService,
@@ -92,14 +94,17 @@ export class ReferralsService {
     //   });
     // }
 
+    this.referralsGateway.emitReferralCreated(saved.id);
+
     return this.findOne(saved.id);
   }
 
   // List (server-side filtered, sorted, paginated)
   async findAll(
+    userId: string,
     filters: ReferralFilterDto,
   ): Promise<PaginatedResult<Referral>> {
-    const qb = this.buildListQuery(filters);
+    const qb = this.buildListQuery(userId, filters);
 
     const allowedSortFields: Record<string, string> = {
       createdAt: "r.createdAt",
@@ -127,6 +132,7 @@ export class ReferralsService {
   }
 
   private buildListQuery(
+    userId: string,
     filters: ReferralFilterDto,
   ): SelectQueryBuilder<Referral> {
     const qb = this.referralRepo
@@ -134,6 +140,11 @@ export class ReferralsService {
       .leftJoinAndSelect("r.patient", "patient")
       .leftJoinAndSelect("r.referringProvider", "referringProvider")
       .leftJoinAndSelect("r.specialist", "specialist");
+
+    if (userId) {
+      // qb.andWhere('r."referringProviderId" = :id', { id: userId });
+      // qb.orWhere('r."specialistId" = :id', { id: userId });
+    }
 
     if (filters.search) {
       qb.andWhere(
@@ -212,6 +223,8 @@ export class ReferralsService {
       after: dto as Record<string, unknown>,
     });
 
+    this.referralsGateway.emitReferralUpdated(id);
+
     return this.findOne(id);
   }
 
@@ -286,8 +299,8 @@ export class ReferralsService {
     return { updated };
   }
 
-  async exportCsv(filters: ReferralFilterDto): Promise<string> {
-    const qb = this.buildListQuery(filters);
+  async exportCsv(userId: string, filters: ReferralFilterDto): Promise<string> {
+    const qb = this.buildListQuery(userId, filters);
     const rows = await qb.getMany();
 
     const header = [

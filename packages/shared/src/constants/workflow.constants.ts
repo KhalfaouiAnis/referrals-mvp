@@ -49,7 +49,7 @@ export const ADVANCE_GUARDS: Readonly<
   [ReferralStatus.SCHEDULING]: [],
 };
 
-/** Human-readable label for each status (used on the frontend stepper). */
+/** Human-readable label for each status. */
 export const STATUS_LABELS: Readonly<Record<ReferralStatus, string>> = {
   [ReferralStatus.INTAKE]: 'Intake',
   [ReferralStatus.CLINICAL_PREP]: 'Clinical prep',

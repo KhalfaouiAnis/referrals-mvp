@@ -127,6 +127,10 @@ foreach ($m in $appManifests) {
     if ($LASTEXITCODE -ne 0) { Write-Fail "Failed to apply $m" }
 }
 
+Write-Step "Forcing rollout to pick up new local images..."
+kubectl rollout restart deployment/api -n referrals
+kubectl rollout restart deployment/web -n referrals
+
 Write-Step "Waiting for application pods..."
 kubectl rollout status deployment/api -n referrals --timeout=180s
 kubectl rollout status deployment/web -n referrals --timeout=60s

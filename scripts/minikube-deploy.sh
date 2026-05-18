@@ -100,7 +100,7 @@ if grep -q "referrals.local" /etc/hosts; then
   warn "  ${HOSTS_LINE}"
 else
   log "Adding entries to /etc/hosts (requires sudo)…"
-  echo "${HOSTS_LINE}" | sudo tee -a /etc/hosts > /dev/null
+  # echo "${HOSTS_LINE}" | sudo tee -a /etc/hosts > /dev/null
   log "Added: ${HOSTS_LINE}"
 fi
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -20,6 +20,7 @@ import { ReferralsDataGrid } from './components/ReferralsDataGrid';
 import { GridRowSelectionModel } from '@mui/x-data-grid';
 import { useUiStore } from '../../store/ui.store';
 import { useBulkAction, useExportReferrals, useReferrals } from '../../api/hooks/useReferrals';
+import debounce from '../../utils/debounce';
 
 export function ReferralsListPage() {
   const navigate = useNavigate();
@@ -27,16 +28,25 @@ export function ReferralsListPage() {
   const [selectedIds, setSelectedIds] = useState<GridRowSelectionModel>({ ids: new Set([]), type: "include" });
   const [search, setSearch] = useState('');
 
-  const { data, isFetching } = useReferrals({ ...referralFilters, search: search || undefined });
+  const { data, isFetching } = useReferrals({ ...referralFilters });
   const { mutate: bulkAction, isPending: bulkPending } = useBulkAction();
   const { mutate: exportReferrals, isPending: exportPending } = useExportReferrals();
 
   const rows = data?.data ?? [];
   const total = data?.meta.total ?? 0;
 
+  const updateFilters = useCallback((value: string) => {
+    setReferralFilters({ page: 1, search: value });
+  }, []);
+
+  const debouncedUpdateFilters = useMemo(
+    () => debounce(updateFilters, 500),
+    [updateFilters]
+  );
+
   const handleSearch = (value: string) => {
     setSearch(value);
-    setReferralFilters({ page: 1 });
+    debouncedUpdateFilters(value);
   };
 
   return (
@@ -77,22 +87,22 @@ export function ReferralsListPage() {
         <Toolbar sx={{ gap: 2, flexWrap: 'wrap', py: 1, minHeight: 'auto' }}>
           <TextField
             size="small"
-            placeholder="Search patients, diagnoses…"
             value={search}
-            onChange={(e) => handleSearch(e.target.value)}
             sx={{ minWidth: 240 }}
+            placeholder="Search patients, diagnoses…"
+            onChange={(e) => handleSearch(e.target.value)}
           />
 
           <Select
             size="small"
             displayEmpty
+            sx={{ minWidth: 140 }}
             value={referralFilters.status?.[0] ?? ''}
             onChange={(e) =>
               setReferralFilters({
                 status: e.target.value ? [e.target.value as ReferralStatus] : undefined,
               })
             }
-            sx={{ minWidth: 140 }}
           >
             <MenuItem value="">All statuses</MenuItem>
             {Object.values(ReferralStatus).map((s) => (
@@ -155,7 +165,7 @@ export function ReferralsListPage() {
                 size="small"
                 disabled={bulkPending}
                 onClick={() => bulkAction({
-                  referralIds: selectedIds.ids,
+                  referralIds: Array.from(selectedIds.ids),
                   action: 'SET_PRIORITY',
                   payload: { priority: ReferralPriority.URGENT },
                 })
@@ -168,7 +178,7 @@ export function ReferralsListPage() {
                 disabled={bulkPending}
                 onClick={() =>
                   bulkAction({
-                    referralIds: selectedIds.ids,
+                    referralIds: Array.from(selectedIds.ids),
                     action: 'SET_PRIORITY',
                     payload: { priority: ReferralPriority.ROUTINE },
                   })

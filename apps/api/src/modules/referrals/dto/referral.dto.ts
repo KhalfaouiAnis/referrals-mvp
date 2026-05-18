@@ -2,6 +2,7 @@ import {
   IsArray,
   IsEnum,
   IsIn,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
@@ -132,5 +133,6 @@ export class BulkActionDto {
   @IsIn(["SET_PRIORITY", "REASSIGN_SPECIALIST"])
   action: "SET_PRIORITY" | "REASSIGN_SPECIALIST";
 
+  @IsObject()
   payload: Record<string, unknown>;
 }

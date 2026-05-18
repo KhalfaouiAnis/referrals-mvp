@@ -29,8 +29,6 @@ export function connectWebSocket(): () => void {
   });
 
   socket.on("referral:updated", (event: ReferralUpdatedEvent) => {
-    console.log("Socket event: referral updated...");
-    
     void queryClient.invalidateQueries({
       queryKey: referralKeys.detail(event.referralId),
     });

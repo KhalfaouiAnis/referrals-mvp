@@ -27,4 +27,4 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%PS_SCRIPT%" %EXTRA_ARG
 @REM     exit /b %ERRORLEVEL%
 @REM )
 
-@REM pause
+pause

@@ -57,8 +57,8 @@ export class ReferralsGateway
   }
 
   /** Broadcast referral status change to all connected clients */
-  emitReferralUpdated(referralId: string, newStatus: string): void {
-    this.server.emit("referral:updated", { referralId, newStatus });
+  emitReferralUpdated(referralId: string): void {
+    this.server.emit("referral:updated", { referralId });
   }
 
   /** Broadcast new referral creation */

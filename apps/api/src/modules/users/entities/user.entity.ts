@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -11,6 +12,7 @@ import { Referral } from "../../referrals/entities/referral.entity";
 import { AuditLog } from "../../audit/entities/audit-log.entity";
 import { ReferralNote } from "../../referrals/entities/referral-note.entity";
 import { ReferralDocument } from "../../referrals/entities/referral-document.entity";
+import { SpecialistProfile } from "./specialist-profile.entity";
 
 @Entity("users")
 export class User {
@@ -20,7 +22,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ select: false })
   passwordHash: string;
 
   @Column()
@@ -31,6 +33,12 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @OneToOne(() => SpecialistProfile, (profile) => profile.user, {
+    nullable: true,
+    eager: false,
+  })
+  specialistProfile?: SpecialistProfile | null;
 
   @OneToMany(() => Referral, (referral) => referral.referringProvider)
   referralsAsReferringProvider: Referral[];

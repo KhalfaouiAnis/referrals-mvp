@@ -1,9 +1,9 @@
 import { Stack } from '@mui/material';
-import { Control } from 'react-hook-form';
+import { Control, useFormContext } from 'react-hook-form';
 import { ReferralPriority } from '@referrals/shared';
 import { CreateReferralFormValues } from '../schema/create-referral.schema';
 import { FormSelect } from '../../../components/ui/FormSelect';
-import { FormField } from '../../../components/ui/FormField';
+import { useSpecialistOptions } from '../../../api/hooks/useSpecialistOptions';
 
 const PRIORITY_OPTIONS = [
   { label: 'Routine', value: ReferralPriority.ROUTINE },
@@ -24,6 +24,10 @@ interface Props {
 }
 
 export function Step4PriorityTimeline({ control }: Props) {
+  const { getValues } = useFormContext<CreateReferralFormValues>()
+  const { specialtyType } = getValues()
+  const { options, isLoading } = useSpecialistOptions(specialtyType);
+
   return (
     <Stack spacing={3}>
       <FormSelect
@@ -42,13 +46,22 @@ export function Step4PriorityTimeline({ control }: Props) {
         helperText="When should the patient ideally be seen?"
       />
 
-      <FormField
+      <FormSelect
+        control={control}
+        options={options}
+        name="specialistId"
+        disabled={isLoading || !specialtyType}
+        label="Preferred specialist ID (optional)"
+        helperText="If blank, the system routes to the best-matched specialist"
+      />
+
+      {/* <FormField
         control={control}
         name="specialistId"
         label="Preferred specialist ID (optional)"
         placeholder="Leave blank for auto-assignment"
         helperText="If blank, the system routes to the best-matched specialist"
-      />
+      /> */}
     </Stack>
   );
 }

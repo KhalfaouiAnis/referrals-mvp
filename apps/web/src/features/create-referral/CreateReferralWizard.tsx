@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useCreateReferral } from "../../api/hooks/usePatients";
 import { CreateReferralFormValues, createReferralSchema, STEP_SCHEMAS } from "./schema/create-referral.schema";
@@ -24,11 +24,7 @@ export function CreateReferralWizard() {
     const [submitError, setSubmitError] = useState<string | null>(null);
     const { mutateAsync: createReferral, isPending } = useCreateReferral();
 
-    const {
-        control,
-        trigger,
-        handleSubmit
-    } = useForm<CreateReferralFormValues>({
+    const methods = useForm<CreateReferralFormValues>({
         resolver: zodResolver(createReferralSchema),
         defaultValues: {
             patientId: '',
@@ -41,6 +37,12 @@ export function CreateReferralWizard() {
         },
         mode: 'onTouched',
     })
+
+    const {
+        control,
+        trigger,
+        handleSubmit
+    } = methods
 
     // Validate only the fields belonging to the current step before advancing.
     const handleNext = async () => {
@@ -98,10 +100,12 @@ export function CreateReferralWizard() {
                 </Box>
 
                 {/* Step content */}
-                {activeStep === 0 && <Step1PatientSelect control={control} />}
-                {activeStep === 1 && <Step2ClinicalInfo control={control} />}
-                {activeStep === 2 && <Step3Documents />}
-                {activeStep === 3 && <Step4PriorityTimeline control={control} />}
+                <FormProvider {...methods}>
+                    {activeStep === 0 && <Step1PatientSelect control={control} />}
+                    {activeStep === 1 && <Step2ClinicalInfo control={control} />}
+                    {activeStep === 2 && <Step3Documents />}
+                    {activeStep === 3 && <Step4PriorityTimeline control={control} />}
+                </FormProvider>
 
                 {submitError && (
                     <Alert severity="error" sx={{ mt: 3 }}>

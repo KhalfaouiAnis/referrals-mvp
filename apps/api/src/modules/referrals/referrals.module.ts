@@ -13,15 +13,20 @@ import { StepTransitionValidator } from "./validators/step-transition.validator"
 import { QueuesModule } from "../queues/queues.module";
 import { DocumentsModule } from "../documents/documents.module";
 import { AuditModule } from "../audit/audit.module";
+import { SpecialistMatchingService } from "./specialist-matching.service";
+import { SpecialistProfile } from "../users/entities/specialist-profile.entity";
+import { Patient } from "../patients/entities/patient.entity";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Referral,
+      Patient,
       ReferralStep,
       ReferralDocument,
       ReferralNote,
       AuthorizationRequest,
+      SpecialistProfile,
       AuditLog,
     ]),
     QueuesModule,
@@ -33,7 +38,8 @@ import { AuditModule } from "../audit/audit.module";
     ReferralsService,
     ReferralWorkflowService,
     StepTransitionValidator,
+    SpecialistMatchingService,
   ],
-  exports: [ReferralsService, ReferralWorkflowService],
+  exports: [ReferralsService, ReferralWorkflowService, SpecialistMatchingService],
 })
 export class ReferralsModule {}

@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query } from "@nestjs/common";
 import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { UsersService } from "./users.service";
-import { UserRole } from "@referrals/shared";
+import { SpecialtyType, UserRole } from "@referrals/shared";
 
 @ApiTags("users")
 @ApiBearerAuth()
@@ -15,8 +15,8 @@ export class UsersController {
   }
 
   @Get("specialists")
-  findSpecialists() {
-    return this.usersService.findSpecialists();
+  findSpecialists(@Query("specialtyType") specialtyType?: SpecialtyType) {
+    return this.usersService.findSpecialists(specialtyType);
   }
 
   @Get(":id")

@@ -13,12 +13,12 @@ import { useNavigate } from 'react-router-dom';
 import { ReferralFilterParams } from '@referrals/shared';
 import { ReferralStatus, ReferralPriority } from '@referrals/shared';
 import { format } from 'date-fns';
-import { ReferralListItem } from '../../../api/services/referrals.service';
+import { ReferralDetail, ReferralListItem } from '../../../api/services/referrals.service';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { PriorityChip } from '../../../components/ui/PriorityChip';
 
 interface ReferralsDataGridProps {
-  rows: ReferralListItem[];
+  rows: ReferralDetail[];
   total: number;
   loading: boolean;
   filters: ReferralFilterParams;
@@ -27,13 +27,11 @@ interface ReferralsDataGridProps {
   onSelectionChange: (ids: GridRowSelectionModel) => void;
 }
 
-const COLUMNS: GridColDef<ReferralListItem>[] = [
+const COLUMNS: GridColDef<ReferralDetail>[] = [
   {
-    field: 'patientName',
+    field: 'patient',
     headerName: 'Patient',
-    getOptionLabel(value: any) {
-      return value.fullName
-    },
+    valueGetter: (value: ReferralDetail['patient']) => value?.fullName ?? '—',
     flex: 1.5,
     minWidth: 160,
   },
@@ -63,15 +61,16 @@ const COLUMNS: GridColDef<ReferralListItem>[] = [
     sortable: true,
   },
   {
-    field: 'specialistName',
+    field: 'specialist',
     headerName: 'Specialist',
     flex: 1,
     minWidth: 140,
-    valueFormatter: (value: string | null) => value ?? '—',
+    valueGetter: (value: ReferralDetail['specialist']) => value?.fullName ?? '—',
   },
   {
-    field: 'referringProviderName',
+    field: 'referringProvider',
     headerName: 'Referring provider',
+    valueGetter: (value: ReferralDetail['referringProvider']) => value?.fullName ?? '—',
     flex: 1,
     minWidth: 160,
   },

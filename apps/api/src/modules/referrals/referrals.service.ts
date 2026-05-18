@@ -14,6 +14,8 @@ import {
 import { ReferralWorkflowService } from "./referral-workflow.service";
 import { PaginatedResult, ReferralPriority } from "@referrals/shared";
 import { AuditService } from "../audit/audit.service";
+import { Patient } from "../patients/entities/patient.entity";
+import { SpecialistMatchingService } from "./specialist-matching.service";
 
 @Injectable()
 export class ReferralsService {
@@ -21,19 +23,49 @@ export class ReferralsService {
     @InjectRepository(Referral)
     private readonly referralRepo: Repository<Referral>,
 
+    @InjectRepository(Patient)
+    private readonly patientRepo: Repository<Patient>,
+
     @InjectRepository(ReferralNote)
     private readonly noteRepo: Repository<ReferralNote>,
 
     private readonly workflowService: ReferralWorkflowService,
+    private readonly specialistMatchingService: SpecialistMatchingService,
     private readonly auditService: AuditService,
   ) {}
 
   async create(dto: CreateReferralDto, actor: User): Promise<Referral> {
-    
+    // Auto-routing when no specialist is chosen by the creator
+    let resolvedSpecialistId = dto.specialistId ?? null;
+    let autoAssigned = false;
+    let matchReasons: string[] = [];
+
+    if (!resolvedSpecialistId) {
+      // Load patient with insurancePlanId so the matcher can check in-network status
+      const patient = await this.patientRepo.findOneOrFail({
+        where: { id: dto.patientId },
+      });
+
+      const match = await this.specialistMatchingService.findBestMatch(
+        patient,
+        dto.specialtyType,
+      );
+
+      if (match) {
+        resolvedSpecialistId = match.specialistUserId;
+        autoAssigned = true;
+        matchReasons = match.reasons;
+      }
+      // No match → referral saved with specialistId = null;
+      // a BullMQ job notifies staff to assign manually.
+    }
+
     const referral = this.referralRepo.create({
       ...dto,
       referringProviderId: actor.id,
-      specialistId: dto.specialistId ?? null,
+      specialistId: resolvedSpecialistId,
+      // autoAssigned,
+      // autoAssignedAt:      autoAssigned ? new Date() : null,
     });
     const saved = await this.referralRepo.save(referral);
 
@@ -45,7 +77,11 @@ export class ReferralsService {
       referralId: saved.id,
       actorId: actor.id,
       action: "REFERRAL_CREATED",
-      after: { status: saved.status, specialtyType: saved.specialtyType },
+      after: {
+        status: saved.status,
+        specialtyType: saved.specialtyType,
+        specialistId: resolvedSpecialistId,
+      },
     });
 
     // TODO

@@ -36,10 +36,17 @@ export interface ReferralDetail extends ReferralListItem {
     mrn: string;
     fullName: string;
     dateOfBirth: string;
-    insurancePlan: string | null;
+    // insurancePlan: string | null;
+    insurancePlanId: string | null;
     insuranceMemberId: string | null;
     phone: string | null;
     email: string | null;
+  };
+  specialist: {
+    fullName: string;
+  };
+  referringProvider: {
+    fullName: string;
   };
   steps: Array<{
     id: string;
@@ -116,10 +123,10 @@ export interface BulkActionDto {
 // Service
 
 export const referralsService = {
-  list: (
+  list: async (
     params: ReferralFilterParams,
-  ): Promise<PaginatedResult<ReferralListItem>> =>
-    api.get("/api/v1/referrals", params),
+  ): Promise<PaginatedResult<ReferralDetail>> =>
+    api.get<PaginatedResult<ReferralDetail>>("/api/v1/referrals", params),
 
   getById: (id: string): Promise<ReferralDetail> =>
     api.get(`/api/v1/referrals/${id}`),
@@ -155,16 +162,6 @@ export const referralsService = {
     form.append("file", file);
     if (label) form.append("label", label);
     return api.upload(`/api/v1/referrals/${id}/documents`, form, onProgress);
-    // return apiClient
-    //   .post(`/api/v1/referrals/${id}/documents`, form, {
-    //     headers: { "Content-Type": "multipart/form-data" },
-    //     onUploadProgress: (e) => {
-    //       if (onProgress && e.total) {
-    //         onProgress(Math.round((e.loaded * 100) / e.total));
-    //       }
-    //     },
-    //   })
-    //   .then(() => undefined);
   },
 
   deleteDocument: (referralId: string, documentId: string): Promise<void> =>

@@ -2,7 +2,8 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "./entities/user.entity";
-import { UserRole } from "@referrals/shared";
+import { SpecialtyType, UserRole } from "@referrals/shared";
+import { SpecialistOptionDto } from "./dto/specialist-option.dto";
 
 @Injectable()
 export class UsersService {
@@ -31,7 +32,9 @@ export class UsersService {
   }
 
   async findOne(id: string): Promise<Omit<User, "passwordHash">> {
-    const user = await this.userRepo.findOne({ where: { id } });
+    const user = await this.userRepo.findOne({
+      where: { id },
+    });
 
     if (!user) throw new NotFoundException(`User ${id} not found.`);
 
@@ -40,7 +43,42 @@ export class UsersService {
   }
 
   /** Returns specialist users for autocomplete in referral forms */
-  async findSpecialists(): Promise<Omit<User, "passwordHash">[]> {
-    return this.findAll(UserRole.SPECIALIST);
+  // async findSpecialists(): Promise<Omit<User, "passwordHash">[]> {
+  //   return this.findAll(UserRole.SPECIALIST);
+  // }
+
+  async findSpecialists(
+    specialtyType?: SpecialtyType,
+  ): Promise<SpecialistOptionDto[]> {
+    const qb = this.userRepo
+      .createQueryBuilder("u")
+      // specialist_profiles has a unique userId FK (OneToOne)
+      .innerJoinAndSelect("u.specialistProfile", "sp")
+      .where("u.role = :role", { role: "SPECIALIST" })
+      .andWhere("u.isActive = true")
+      .andWhere("sp.isAcceptingReferrals = true");
+
+    if (specialtyType) {
+      qb.andWhere("sp.specialtyType = :specialtyType", {
+        specialtyType,
+      });
+    }
+
+    qb.orderBy("sp.nextAvailableSlotDays", "ASC", "NULLS LAST").addOrderBy(
+      "u.fullName",
+      "ASC",
+    );
+
+    const users = await qb.getMany();
+
+    return users.map((u) => ({
+      id: u.id,
+      fullName: u.fullName,
+      specialtyType: u?.specialistProfile?.specialtyType || "",
+      isAcceptingReferrals: u?.specialistProfile?.isAcceptingReferrals || true,
+      nextAvailableSlotDays:
+        u?.specialistProfile?.nextAvailableSlotDays ?? null,
+      zipCode: u?.specialistProfile?.zipCode ?? null,
+    }));
   }
 }

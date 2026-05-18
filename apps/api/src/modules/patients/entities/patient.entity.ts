@@ -6,8 +6,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   Index,
+  JoinColumn,
+  ManyToOne,
 } from "typeorm";
 import { Referral } from "../../referrals/entities/referral.entity";
+import { InsurancePlan } from "src/modules/users/entities/insurance-plans.entity";
 
 @Entity("patients")
 export class Patient {
@@ -25,8 +28,12 @@ export class Patient {
   @Column({ type: "date" })
   dateOfBirth: string;
 
-  @Column({ type: "varchar", nullable: true })
-  insurancePlan: string | null;
+  @ManyToOne(() => InsurancePlan, { nullable: true, eager: false })
+  @JoinColumn({ name: "insurancePlanId" })
+  insurancePlan: InsurancePlan | null;
+
+  @Column({ type: "uuid", nullable: true })
+  insurancePlanId: string | null;
 
   @Column({ type: "varchar", nullable: true })
   insuranceMemberId: string | null;

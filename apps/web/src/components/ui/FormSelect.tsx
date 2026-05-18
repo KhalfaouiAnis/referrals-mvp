@@ -64,8 +64,8 @@ export function FormSelect<
           <Select
             {...selectProps}
             {...field}
-            labelId={labelId}
             label={label}
+            labelId={labelId}
           >
             {options.map((opt) => (
               <MenuItem key={opt.value} value={opt.value}>
